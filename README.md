@@ -19,7 +19,7 @@ This repo contains a complete and modern Bash terminal environment designed for 
 
 ## 🔧 Installation (One-liner)
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/<your-user>/<your-repo>/main/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/padauker/bash-tmux-setup/main/install.sh)"
 ```
 
 > Replace `<your-user>/<your-repo>` with your GitHub path.
