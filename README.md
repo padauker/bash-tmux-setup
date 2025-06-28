@@ -1,6 +1,6 @@
 # Bash + Tmux Developer Terminal Setup
 
-This repo contains a complete and modern Bash terminal environment designed for productivity, clarity, and tmux integration. Optionally supports integration with ChatGPT provided an OpenAI API Key.
+This repo contains a complete and modern Bash terminal environment designed for productivity, clarity, and tmux integration.
 
 ## ✨ Features
 
@@ -16,6 +16,7 @@ This repo contains a complete and modern Bash terminal environment designed for 
   - `tmux-fzf` for fast pane/window switching
 - **Git integration** in prompt and tmux bar
 - **Local ChatGPT CLI integration** for AI assistance
+- **Aider** AI-powered pair programming assistant via terminal
 - Auto tmux session attach
 
 ## 🔧 Installation (One-liner)
@@ -41,12 +42,13 @@ Coming soon...
 - `Ctrl+a Ctrl-r` → Restore session
 - `Ctrl+r` → Fuzzy search command history (fzf)
 - `zi` → Fuzzy jump to recently used dir (zoxide)
+- `prefix + a` → Open Aider assistant in tmux popup (if bound)
 
 ## 📦 Dependencies
 Tested on Debian/Ubuntu:
 ```bash
 sudo apt install curl git tmux fzf zoxide unzip build-essential fonts-powerline python3-pip
-pip install openai
+pip install openai aider-chat
 ```
 
 ## 🤖 AI Assistant CLI (Optional)
@@ -69,6 +71,24 @@ chmod +x ~/.local/bin/chatgpt
 Use it like:
 ```bash
 chatgpt "Explain how tmux copy mode works"
+```
+
+## 🧠 Aider Integration (Optional)
+Install Aider:
+```bash
+pip install aider-chat
+```
+Optional alias in `.bashrc`:
+```bash
+alias ai="aider"
+```
+To launch inside tmux popup:
+```tmux
+bind-key a display-popup -E "aider"
+```
+Then use:
+```bash
+ai src/  # to chat with files in your repo
 ```
 
 ## ✅ Post-Install
