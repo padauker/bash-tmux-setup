@@ -22,8 +22,6 @@ This repo contains a complete and modern Bash terminal environment designed for 
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/padauker/bash-tmux-setup/main/install.sh)"
 ```
 
-> Replace `<your-user>/<your-repo>` with your GitHub path.
-
 ## 🗂 Files Included
 - `install.sh` — Full terminal setup script
 - `.bashrc` — Aliases, plugin setup, and auto-tmux attach
