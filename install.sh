@@ -1,27 +1,39 @@
 #!/bin/bash
 
-# Set up directories
+set -e
+
+# Prompt for OpenAI API key
+read -p "Enter your OpenAI API key (sk-...): " OPENAI_KEY
+
+# Write to .env file
 mkdir -p ~/.config/bash_tmux_setup
-cd ~/.config/bash_tmux_setup || exit 1
+cat > ~/.config/bash_tmux_setup/.env <<EOF
+OPENAI_API_KEY="$OPENAI_KEY"
+EOF
 
-# 1. Install dependencies
-sudo apt update && sudo apt install -y \
-    curl git tmux fzf zoxide build-essential unzip wget fonts-powerline
+# Export API key for immediate use
+export OPENAI_API_KEY="$OPENAI_KEY"
 
-# 2. Install OxProto Nerd Font Mono
+# Install dependencies
+sudo apt update && sudo apt install -y   curl git tmux fzf zoxide unzip build-essential   fonts-powerline python3-pip
+
+# Install Python packages
+pip install --user openai aider-chat rich
+
+# Install OxProto Nerd Font Mono
 wget -O OxProto.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/OxProto.zip
-unzip OxProto.zip -d OxProtoFonts
+unzip -o OxProto.zip -d OxProtoFonts
 mkdir -p ~/.local/share/fonts
 cp OxProtoFonts/*Mono*.ttf ~/.local/share/fonts/
 fc-cache -fv
 
-# 3. Install Oh My Bash
+# Install Oh My Bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
-# 4. Install TPM (Tmux Plugin Manager)
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+# Install TPM (Tmux Plugin Manager)
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm || true
 
-# 5. Generate .bashrc
+# Create ~/.bashrc
 cat > ~/.bashrc <<'EOF'
 OSH_THEME="powerline"
 
@@ -48,13 +60,25 @@ alias gco='git checkout'
 alias ..='cd ..'
 alias zi='zoxide query -i'
 alias zs='zoxide add $(pwd)'
+alias ai='aider'
 
+# Load OpenAI API key
+if [ -f ~/.config/bash_tmux_setup/.env ]; then
+  export $(cat ~/.config/bash_tmux_setup/.env | xargs)
+fi
+
+# Auto attach tmux
 if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
   tmux attach-session -t default || tmux new-session -s default
 fi
 EOF
 
-# 6. Generate .tmux.conf
+# Install ChatGPT CLI script from repo
+mkdir -p ~/.local/bin
+curl -fsSL https://raw.githubusercontent.com/padauker/bash-tmux-setup/main/scripts/chatgpt -o ~/.local/bin/chatgpt
+chmod +x ~/.local/bin/chatgpt
+
+# Create ~/.tmux.conf
 cat > ~/.tmux.conf <<'EOF'
 set -g mouse on
 set -g history-limit 10000
@@ -85,9 +109,10 @@ set -g @plugin 'sainnhe/tmux-fzf'
 set -g @continuum-restore 'on'
 set -g @resurrect-capture-pane-contents 'on'
 
+bind-key a display-popup -E "aider"
+
 run '~/.tmux/plugins/tpm/tpm'
 EOF
 
-# Done
 clear
-echo "✅ Terminal setup installed. Start tmux and press Ctrl+a then Shift+I to install plugins."
+echo "✅ Terminal setup complete. Start tmux and press Ctrl+a then Shift+I to install plugins."
