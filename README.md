@@ -24,8 +24,6 @@ This repo contains a complete and modern Bash terminal environment designed for 
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/padauker/bash-tmux-setup/main/install.sh)"
 ```
 
-> Replace `<your-user>/<your-repo>` with your GitHub path.
-
 ## 🗂 Files Included
 - `install.sh` — Full terminal setup script
 - `.bashrc` — Aliases, plugin setup, and auto-tmux attach
@@ -52,40 +50,34 @@ pip install openai aider-chat
 ```
 
 ## 🤖 AI Assistant CLI (Optional)
-Create a file at `~/.local/bin/chatgpt`:
-```bash
-#!/usr/bin/env python3
-import openai, sys
-openai.api_key = "sk-..."  # Replace with your API key
-prompt = " ".join(sys.argv[1:])
-response = openai.ChatCompletion.create(
-  model="gpt-4",
-  messages=[{"role": "user", "content": prompt}]
-)
-print(response.choices[0].message.content.strip())
-```
-Then:
-```bash
-chmod +x ~/.local/bin/chatgpt
-```
-Use it like:
+A CLI script for OpenAI chat is automatically installed as `~/.local/bin/chatgpt`.
+
+Example:
 ```bash
 chatgpt "Explain how tmux copy mode works"
 ```
+
+Supports:
+- Streaming output
+- Multiline prompts via stdin
+- Configured via `~/.config/bash_tmux_setup/.env`
 
 ## 🧠 Aider Integration (Optional)
 Install Aider:
 ```bash
 pip install aider-chat
 ```
+
 Optional alias in `.bashrc`:
 ```bash
 alias ai="aider"
 ```
+
 To launch inside tmux popup:
 ```tmux
 bind-key a display-popup -E "aider"
 ```
+
 Then use:
 ```bash
 ai src/  # to chat with files in your repo
