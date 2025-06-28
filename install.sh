@@ -15,10 +15,20 @@ EOF
 export OPENAI_API_KEY="$OPENAI_KEY"
 
 # Install dependencies
-sudo apt update && sudo apt install -y   curl git tmux fzf zoxide unzip build-essential   fonts-powerline python3-pip
+sudo apt update && sudo apt install -y \
+  curl git tmux fzf zoxide unzip build-essential \
+  fonts-powerline python3-pip python3-venv
+
+# Set up virtualenv for CLI tools
+mkdir -p ~/.config/bash_tmux_setup/venv
+python3 -m venv ~/.config/bash_tmux_setup/venv
+source ~/.config/bash_tmux_setup/venv/bin/activate
 
 # Install Python packages
-pip install --user openai aider-chat rich
+pip install --upgrade pip
+pip install openai aider-chat rich
+
+deactivate
 
 # Install OxProto Nerd Font Mono
 wget -O OxProto.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/OxProto.zip
@@ -65,6 +75,11 @@ alias ai='aider'
 # Load OpenAI API key
 if [ -f ~/.config/bash_tmux_setup/.env ]; then
   export $(cat ~/.config/bash_tmux_setup/.env | xargs)
+fi
+
+# Activate Python virtualenv for chatgpt
+if [ -f ~/.config/bash_tmux_setup/venv/bin/activate ]; then
+  source ~/.config/bash_tmux_setup/venv/bin/activate
 fi
 
 # Auto attach tmux
