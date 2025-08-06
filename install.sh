@@ -9,12 +9,11 @@ sudo apt update && sudo apt install -y \
   bmon bpytop
 
 # Install OxProto Nerd Font Mono
-wget -O JetBrainsMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip
-unzip -o JetBrainsMono.zip -d JetBrainsMonoFonts
-mkdir -p ~/.local/share/fonts
-cp JetBrainsMonoFonts/*.ttf ~/.local/share/fonts/
-fc-cache -fv
-rm -rf JetBrainsMono.zip JetBrainsMonoFonts
+git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git ~/.nerd-fonts
+cd ~/.nerd-fonts
+./install.sh JetBrainsMono
+cd ~
+rm -rf ~/.nerd-fonts
 
 # Install Oh My Bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
