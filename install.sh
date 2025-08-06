@@ -2,33 +2,11 @@
 
 set -e
 
-# Prompt for OpenAI API key
-read -p "Enter your OpenAI API key (sk-...): " OPENAI_KEY
-
-# Write to .env file
-mkdir -p ~/.config/bash_tmux_setup
-cat > ~/.config/bash_tmux_setup/.env <<EOF
-OPENAI_API_KEY="$OPENAI_KEY"
-EOF
-
-# Export API key for immediate use
-export OPENAI_API_KEY="$OPENAI_KEY"
-
 # Install dependencies
 sudo apt update && sudo apt install -y \
   curl git tmux fzf zoxide unzip build-essential \
-  fonts-powerline python3-pip python3-venv
-
-# Set up virtualenv for CLI tools
-mkdir -p ~/.config/bash_tmux_setup/venv
-python3 -m venv ~/.config/bash_tmux_setup/venv
-source ~/.config/bash_tmux_setup/venv/bin/activate
-
-# Install Python packages
-pip install --upgrade pip
-pip install openai aider-chat rich
-
-deactivate
+  fonts-powerline python3-pip python3-venv \
+  bmon bpytop
 
 # Install OxProto Nerd Font Mono
 wget -O OxProto.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/OxProto.zip
@@ -36,6 +14,7 @@ unzip -o OxProto.zip -d OxProtoFonts
 mkdir -p ~/.local/share/fonts
 cp OxProtoFonts/*Mono*.ttf ~/.local/share/fonts/
 fc-cache -fv
+rm -rf OxProto.zip OxProtoFonts
 
 # Install Oh My Bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
@@ -70,28 +49,12 @@ alias gco='git checkout'
 alias ..='cd ..'
 alias zi='zoxide query -i'
 alias zs='zoxide add $(pwd)'
-alias ai='aider'
-
-# Load OpenAI API key
-if [ -f ~/.config/bash_tmux_setup/.env ]; then
-  export $(cat ~/.config/bash_tmux_setup/.env | xargs)
-fi
-
-# Activate Python virtualenv for chatgpt
-if [ -f ~/.config/bash_tmux_setup/venv/bin/activate ]; then
-  source ~/.config/bash_tmux_setup/venv/bin/activate
-fi
 
 # Auto attach tmux
 if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
   tmux attach-session -t default || tmux new-session -s default
 fi
 EOF
-
-# Install ChatGPT CLI script from repo
-mkdir -p ~/.local/bin
-curl -fsSL https://raw.githubusercontent.com/padauker/bash-tmux-setup/main/scripts/chatgpt -o ~/.local/bin/chatgpt
-chmod +x ~/.local/bin/chatgpt
 
 # Create ~/.tmux.conf
 cat > ~/.tmux.conf <<'EOF'
@@ -123,8 +86,6 @@ set -g @plugin 'sainnhe/tmux-fzf'
 
 set -g @continuum-restore 'on'
 set -g @resurrect-capture-pane-contents 'on'
-
-bind-key a display-popup -E "aider"
 
 run '~/.tmux/plugins/tpm/tpm'
 EOF
