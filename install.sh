@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 # Install dependencies
@@ -8,21 +7,27 @@ sudo apt update && sudo apt install -y \
   fonts-powerline python3-pip python3-venv \
   bmon bpytop
 
-# Install OxProto Nerd Font Mono
+# Install JetBrainsMono Nerd Font
 git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git ~/.nerd-fonts
 cd ~/.nerd-fonts
 ./install.sh JetBrainsMono
 cd ~
 rm -rf ~/.nerd-fonts
-
-# Install Oh My Bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+fc-cache -fv
 
 # Install TPM (Tmux Plugin Manager)
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm || true
 
-# Create ~/.bashrc
+# Install Oh My Bash non-interactively
+export OSH="${HOME}/.oh-my-bash"
+if [ ! -d "$OSH" ]; then
+  git clone https://github.com/ohmybash/oh-my-bash.git "$OSH"
+fi
+
+# Set up ~/.bashrc
 cat > ~/.bashrc <<'EOF'
+# Oh My Bash configuration
+export OSH="$HOME/.oh-my-bash"
 OSH_THEME="powerline"
 
 OSH_PLUGINS=(
@@ -36,9 +41,13 @@ OSH_PLUGINS=(
   zoxide
 )
 
+source "$OSH/oh-my-bash.sh"
+
+# zoxide + fzf setup
 eval "$(zoxide init bash)"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+# Aliases
 alias ll='ls -alF'
 alias gs='git status'
 alias ga='git add'
@@ -55,7 +64,7 @@ if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
 fi
 EOF
 
-# Create ~/.tmux.conf
+# Set up ~/.tmux.conf
 cat > ~/.tmux.conf <<'EOF'
 set -g mouse on
 set -g history-limit 10000
@@ -90,4 +99,6 @@ run '~/.tmux/plugins/tpm/tpm'
 EOF
 
 clear
-echo "✅ Terminal setup complete. Start tmux and press Ctrl+a then Shift+I to install plugins."
+echo "✅ Terminal setup complete."
+echo "💡 Open a new terminal or run: source ~/.bashrc"
+echo "💡 Start tmux and press Ctrl+a then Shift+I to install plugins."
